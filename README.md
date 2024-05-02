@@ -1,4 +1,4 @@
-# Internet Outage
+# Blackout Check
 
 ## Description
 

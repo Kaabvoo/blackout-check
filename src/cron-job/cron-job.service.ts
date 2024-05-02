@@ -23,7 +23,7 @@ export class CronJobService {
                         http_message: res.statusText,
                         link: x,
                         wasSuccessful: true
-                    }
+                    };
                     break;
                 }
             }
