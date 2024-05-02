@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { CreateOutageDto, getQuery } from './dto/create-outage.dto';
-import { UpdateOutageDto } from './dto/update-outage.dto';
 import { Outage } from './entities/outage.entity';
 
 @Injectable()
@@ -24,5 +23,9 @@ export class OutagesService {
       });
     }
     return this._outageRepo.find();
+  }
+
+  async deleteFromAndBack(date: Date) {
+    await this._outageRepo.delete({ date: LessThan(date) });
   }
 }

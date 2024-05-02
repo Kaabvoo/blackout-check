@@ -9,7 +9,12 @@ export class CronJobService {
     sites: string[] = ["http://google.com", "http://msn.com", "http://interno.clubers.com.mx"];
 
     constructor(private outagesService: OutagesService) {
-        const job = cron.schedule('*/5 * * * *', async () => {
+        this.checkerCronJob().start();
+        this.partialDeleteDatabase().start();
+    }
+
+    checkerCronJob(): any {
+        return cron.schedule('*/5 * * * *', async () => {
 
             var objToCreate: CreateOutageDto = undefined;
 
@@ -29,11 +34,17 @@ export class CronJobService {
             }
 
             if (objToCreate !== undefined)
-                outagesService.create(objToCreate);
+                this.outagesService.create(objToCreate);
             else
-                outagesService.create({ date: new Date().toString(), wasSuccessful: false });
+                this.outagesService.create({ date: new Date().toString(), wasSuccessful: false });
         });
+    }
 
-        job.start();
+    partialDeleteDatabase(): any {
+        return cron.schedule('0 0 */1 * *', async () => {
+            var lastWeek = new Date();
+            lastWeek.setDate(lastWeek.getDate() - 7);
+            this.outagesService.deleteFromAndBack(lastWeek);
+        });
     }
 }
